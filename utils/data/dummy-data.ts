@@ -72,3 +72,5 @@ export const PLACES: Place[] = places
 
 // Output the generated dummy places
 console.log(dummyPlaces)
+
+

@@ -1,60 +1,64 @@
+import { Keyboard, StyleSheet, View, ScrollView } from 'react-native'
+import React, { useCallback, useState } from 'react'
+import Toast from 'react-native-toast-message'
 import {
-	Keyboard,
-	StyleSheet,
-	Text,
-	View,
-	ScrollView,
-	Image,
-	TouchableOpacity,
-} from 'react-native'
-import React, { useState } from 'react'
-import { FontAwesome } from '@expo/vector-icons'
+	NavigationProp,
+	useFocusEffect,
+	useNavigation,
+} from '@react-navigation/native'
 
 import { FormButton, FormInput } from '../ui'
 import { GlobalStyles } from '../../constants'
+import { RootStackParamList } from '../../types'
+import ImagePicker from './ImagePicker'
+
+const initialFormState = {
+	description: {
+		value: '',
+		isValid: true,
+	},
+	title: {
+		value: '',
+		isValid: true,
+	},
+	address: {
+		value: '',
+		isValid: true,
+	},
+	location: {
+		latitude: 0,
+		longitude: 0,
+	},
+}
 
 export function PlacesForm() {
-	const [formState, setFormState] = useState({
-		description: {
-			value: '',
-			isValid: true,
-		},
-		title: {
-			value: '',
-			isValid: true,
-		},
-		imageUrl: {
-			value: '',
-			isValid: true,
-		},
-		address: {
-			value: '',
-			isValid: true,
-		},
-		location: {
-			latitude: 0,
-			longitude: 0,
-		},
-	})
-
-	const { description, title, imageUrl, address, location } = formState
-	const [imagePreview, setImagePreview] = useState<string | null>(null)
-	const [imageError, setImageError] = useState(false)
+	const navigation = useNavigation<NavigationProp<RootStackParamList>>()
+	const [formState, setFormState] = useState(initialFormState)
+	const { description, title, address, location } = formState
+	 const [selectedImage, setSelectedImage] = useState<string | null>(null)
+		const [imageError, setImageError] = useState(false)
 
 	const isFormInvalid =
 		!description.isValid ||
 		!title.isValid ||
-		!imageUrl.isValid ||
 		!address.isValid ||
 		description.value === '' ||
 		title.value === '' ||
-		imageUrl.value === '' ||
 		address.value === ''
 
-	function redirectHandler() {
-		// navigation.goBack()
-	}
+	useFocusEffect(
+		useCallback(() => {
+			setFormState(initialFormState)
+		}, []),
+	)
 
+function redirectHandler() {
+	// Clear the form state and error fields when navigating back to the form
+	setFormState(initialFormState)
+	setSelectedImage(null) // Clear the selected image state
+	setImageError(false) // Reset the image error state
+	navigation.goBack()
+}
 	const dismissKeyboard = () => {
 		Keyboard.dismiss()
 	}
@@ -73,20 +77,42 @@ export function PlacesForm() {
 				...prevState.title,
 				isValid: true,
 			},
-			imageUrl: {
-				...prevState.imageUrl,
-				isValid: true,
-			},
 			address: {
 				...prevState.address,
 				isValid: true,
 			},
 		}))
 
+		Toast.show({
+			type: 'success',
+			text1: 'Form Submitted',
+			text2: 'Your form has been submitted successfully.',
+			position: 'top',
+			// topOffset: 20,
+			// bottomOffset: 0,
+			visibilityTime: 4000,
+			autoHide: true,
+			onShow: () => console.log('Toast shown'),
+			onHide: () => console.log('Toast hidden'),
+		})
+
 		redirectHandler()
 	}
 
 	function handleCancel() {
+		Toast.show({
+			type: 'error',
+			text1: 'Form Cancelled',
+			text2: 'You have cancelled the form submission.',
+			// position: 'bottom',
+			// topOffset: 20,
+			// bottomOffset: 0,
+			visibilityTime: 4000,
+			autoHide: true,
+			onShow: () => console.log('Toast shown'),
+			onHide: () => console.log('Toast hidden'),
+			onPress: () => console.log('Toast pressed'),
+		})
 		redirectHandler()
 	}
 
@@ -120,16 +146,6 @@ export function PlacesForm() {
 					},
 				}))
 			}
-		} else if (inputIdentifier === 'imageUrl') {
-			if (enteredValue.trim() === '') {
-				setFormState((prevState) => ({
-					...prevState,
-					imageUrl: {
-						...prevState.imageUrl,
-						isValid: false,
-					},
-				}))
-			}
 		} else if (inputIdentifier === 'address') {
 			if (enteredValue.trim() === '') {
 				setFormState((prevState) => ({
@@ -153,22 +169,6 @@ export function PlacesForm() {
 			[inputIdentifier]: {
 				...prevState[inputIdentifier],
 				value: enteredValue,
-			},
-		}))
-
-		if (inputIdentifier === 'imageUrl') {
-			setImagePreview(enteredValue)
-		}
-	}
-
-	const handleImageRemove = () => {
-		setImagePreview('')
-		setFormState((prevState) => ({
-			...prevState,
-			imageUrl: {
-				...prevState.imageUrl,
-				value: '',
-				isValid: true,
 			},
 		}))
 	}
@@ -221,43 +221,13 @@ export function PlacesForm() {
 					autoCapitalize="sentences"
 				/>
 
-				<FormInput
-					value={imageUrl.value}
-					errorMessage={!imageUrl.isValid ? 'Please enter an image URL' : ''}
-					error={!imageUrl.isValid}
-					onChangeText={handleInputChange.bind(null, 'imageUrl')}
-					inputContainerStyle={imageUrl.isValid ? styles.inputContainer : null}
-					inputStyle={{
-						...styles.input,
-					}}
-					textAlignVertical="top"
-					placeholder=""
-					label="Image URL"
-					multiline={false}
-					autoCorrect={false}
-					autoCapitalize="none"
+				<ImagePicker
+					selectedImage={selectedImage}
+					setSelectedImage={setSelectedImage}
+					imageError={imageError}
+					setImageError={setImageError}
 				/>
 
-				{imagePreview && !imageError ? (
-					<View style={styles.imagePreviewContainer}>
-						<Image
-							source={{ uri: imagePreview }}
-							style={styles.imagePreview}
-							onError={() => setImageError(true)}
-						/>
-						<TouchableOpacity
-							style={styles.removeButton}
-							onPress={handleImageRemove}>
-							<FontAwesome name="times-circle" size={24} color="red" />
-						</TouchableOpacity>
-					</View>
-				) : (
-					<View style={styles.imagePlaceholderContainer}>
-						<Text style={styles.imagePlaceholderText}>
-							{imageError ? 'Failed to load image' : 'No Image Selected'}
-						</Text>
-					</View>
-				)}
 				<FormInput
 					value={address.value}
 					errorMessage={!address.isValid ? 'Please enter an address' : ''}
@@ -312,6 +282,7 @@ const styles = StyleSheet.create({
 	wrapper: {
 		flex: 1,
 		padding: 24,
+		paddingBottom: 50,
 	},
 	deleteIconContainer: {
 		marginBottom: 16,
@@ -324,8 +295,8 @@ const styles = StyleSheet.create({
 		width: '100%',
 		flexDirection: 'row',
 		alignItems: 'center',
-		justifyContent: 'center',
-		marginBottom: 15,
+		justifyContent: 'space-between',
+		marginBottom: 50,
 	},
 	buttonContainer: {
 		flex: 1,
@@ -348,34 +319,5 @@ const styles = StyleSheet.create({
 	descriptionInput: {
 		maxHeight: 100,
 		height: 80,
-	},
-	imagePreviewContainer: {
-		position: 'relative',
-		marginBottom: 20,
-	},
-	imagePreview: {
-		width: '100%',
-		height: 200,
-		resizeMode: 'cover',
-		borderRadius: 8,
-	},
-	removeButton: {
-		position: 'absolute',
-		top: 10,
-		right: 10,
-		zIndex: 1,
-	},
-	imagePlaceholderContainer: {
-		width: '100%',
-		height: 200,
-		backgroundColor: '#EFEFEF',
-		justifyContent: 'center',
-		alignItems: 'center',
-		borderRadius: 8,
-		marginBottom: 20,
-	},
-	imagePlaceholderText: {
-		fontSize: 16,
-		color: '#777',
 	},
 })

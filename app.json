@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "cameraPermission": "The app needs to access your camera in order to take photos of your favorite."
+        }
+      ]
+    ]
+  }
+}
