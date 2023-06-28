@@ -6,18 +6,17 @@ import {
 	StyleProp,
 	ViewStyle,
 	Pressable,
-	TextStyle,
 } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
+import { FontAwesome } from '@expo/vector-icons'
 
-import { windowHeight } from '../../utils'
 import { GlobalStyles } from '../../constants'
 
 type ButtonType = {
 	buttonTitle?: string
 	onPress?: () => void
 	btnType?: string
-	buttonTextStyle?: StyleProp<TextStyle>
+	buttonTextStyle?: any
 	buttonContainerStyle?: StyleProp<ViewStyle>
 	isIconButton?: boolean
 	iconName?: string
@@ -26,6 +25,7 @@ type ButtonType = {
 	mode?: 'flat' | 'button'
 	disabled?: boolean
 	iconPressedStyle?: StyleProp<ViewStyle>
+	buttonPressedStyle?: StyleProp<ViewStyle>
 }
 
 export function FormButton({
@@ -36,10 +36,11 @@ export function FormButton({
 	isIconButton,
 	iconName,
 	iconSize,
+	iconColor = 'white',
 	mode,
-	iconColor,
 	disabled,
 	iconPressedStyle,
+	buttonPressedStyle,
 	...rest
 }: ButtonType) {
 	if (isIconButton) {
@@ -68,13 +69,22 @@ export function FormButton({
 				styles.iconContainer,
 				styles.buttonContainer,
 				buttonContainerStyle,
-				pressed && styles.buttonPressed,
+				pressed ? buttonPressedStyle || styles.buttonPressed : null,
 				mode === 'flat' && styles.flat,
 				disabled ? styles.disabledButton : null,
 			]}
 			disabled={disabled}
 			{...rest}>
 			<View style={styles.btnTxtWrapper}>
+				{btnType && (
+					<View style={styles.iconWrapper}>
+						<FontAwesome
+							name={btnType as any}
+							size={iconSize || 22}
+							color={iconColor}
+						/>
+					</View>
+				)}
 				<Text
 					style={[
 						styles.buttonText,
@@ -91,18 +101,18 @@ export function FormButton({
 const styles = StyleSheet.create({
 	buttonContainer: {
 		marginTop: 16,
+		flex: 1,
 		width: '100%',
-		height: windowHeight / 15,
-		maxHeight: 45,
-		backgroundColor: '#2e64e5',
+		backgroundColor: GlobalStyles.colors.primary500,
 		padding: 10,
+		display: 'flex',
 		alignItems: 'center',
 		justifyContent: 'center',
 		borderRadius: 5,
 		cursor: 'pointer',
 	},
 	buttonPressed: {
-		backgroundColor: '#1d4ed8',
+		backgroundColor: GlobalStyles.colors.primary600,
 		opacity: 0.75,
 		borderRadius: 5,
 	},
@@ -114,24 +124,32 @@ const styles = StyleSheet.create({
 		cursor: 'pointer',
 	},
 	iconPressed: {
-		backgroundColor: '#1d4ed8',
+		backgroundColor: GlobalStyles.colors.primary500,
 	},
 	buttonText: {
 		fontSize: 18,
 		textAlign: 'center',
 		fontWeight: 'bold',
 		color: '#ffffff',
-		// fontFamily: 'Lato-Regular',
 	},
 	btnTxtWrapper: {
 		flex: 1,
+		flexDirection: 'row',
+		justifyContent: 'center',
+		alignItems: 'center',
+	},
+	iconWrapper: {
+		width: 30,
+		marginRight: 5,
 		justifyContent: 'center',
 		alignItems: 'center',
 	},
 	flat: {
 		backgroundColor: 'transparent',
+		flex: 1,
 	},
 	flatText: {
+		fontSize: 16,
 		color: GlobalStyles.colors.primary500,
 	},
 	disabledButton: {
