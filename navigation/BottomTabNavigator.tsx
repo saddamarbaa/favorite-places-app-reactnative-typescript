@@ -1,7 +1,12 @@
 import * as React from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { StyleSheet } from 'react-native'
-import { NavigationProp, useNavigation } from '@react-navigation/native'
+
+import {
+	NavigationProp,
+	useNavigation,
+	useRoute,
+} from '@react-navigation/native'
 
 import { RootStackParamList } from '../types'
 import {
@@ -18,6 +23,10 @@ const Tab = createBottomTabNavigator<RootStackParamList>()
 
 export function BottomTabNavigator() {
 	const navigation = useNavigation<NavigationProp<RootStackParamList>>()
+	const route = useRoute()
+
+	const shouldShowTabBar = route.name !== 'Map'
+
 	const handleGoBack = () => {
 		navigation.goBack()
 	}
@@ -79,6 +88,9 @@ export function BottomTabNavigator() {
 					headerShown: true,
 					title: 'Details',
 					tabBarButton: () => null,
+					tabBarStyle: {
+						display: 'none',
+					},
 				})}
 			/>
 
@@ -101,6 +113,9 @@ export function BottomTabNavigator() {
 					tabBarIcon: ({ color, size }) => (
 						<Ionicons name="map" size={24} color={color} />
 					),
+					tabBarStyle: {
+						display: 'none',
+					},
 				})}
 			/>
 		</Tab.Navigator>

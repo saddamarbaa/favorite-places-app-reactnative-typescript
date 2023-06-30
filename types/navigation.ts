@@ -18,7 +18,10 @@ export type RootStackParamList = {
 		id: string | number
 		otherParam?: string
 	}
-	AddPlace: { id?: string }
+	AddPlace: {
+		latitude: number
+		longitude: number
+	} | null
 }
 
 export type AuthenticatedStackScreenProps = NativeStackScreenProps<
