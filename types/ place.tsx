@@ -18,3 +18,8 @@ export interface PlaceT {
 	averageRating?: number
 	reviewCount?: number
 }
+
+export interface LocationT {
+	latitude: number
+	longitude: number
+}

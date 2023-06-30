@@ -51,9 +51,9 @@ const PlaceItem: React.FC<Props> = ({
 						<MaterialCommunityIcons
 							name="map-marker-alert"
 							size={20}
-							color="black"
+							color={GlobalStyles.colors.secondary500}
 						/>
-						<Text style={styles.address} numberOfLines={2} ellipsizeMode="tail">
+						<Text style={styles.address} numberOfLines={4} ellipsizeMode="tail">
 							{address}
 						</Text>
 					</View>
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 	},
 	content: {
-		flex: 1,
+		flex: 2,
 		marginLeft: 10,
 		padding: 10,
 	},
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
 	address: {
 		flex: 1,
 		marginLeft: 3,
-		fontSize: 16,
+		fontSize: 14,
 	},
 	pressedItem: {
 		opacity: 0.5,
@@ -123,10 +123,16 @@ const styles = StyleSheet.create({
 		marginLeft: 4,
 	},
 	image: {
-		width: 130,
+		flex: 1,
+		width: 110,
 		minHeight: 100,
 		height: '100%',
 		borderRadius: 8,
+	},
+	coordinates: {
+		fontSize: 12,
+		color: '#888',
+		marginLeft: 3,
 	},
 })
 

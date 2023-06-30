@@ -2,13 +2,13 @@ import { Place } from '../../models'
 import { PlaceT, Review } from '../../types'
 
 // Function to generate a random unique identifier
-function generateUniqueId(): string {
+export function generateUniqueId(): string {
 	const uniqueId = Math.random().toString(36).substring(2, 10)
 	return uniqueId
 }
 
 // Function to generate dummy data for a place
-function generateDummyPlace(): PlaceT {
+export function generateDummyPlace(): PlaceT {
 	const place: PlaceT = {
 		title: 'Dummy Place',
 		imageUrl: 'https://dummyimage.com/400x300',
@@ -28,7 +28,7 @@ function generateDummyPlace(): PlaceT {
 }
 
 // Function to generate dummy reviews
-function generateDummyReviews(): Review[] {
+export function generateDummyReviews(): Review[] {
 	const reviews: Review[] = []
 
 	// Generate a random number of reviews (between 0 and 10)
@@ -48,14 +48,14 @@ function generateDummyReviews(): Review[] {
 }
 
 // Function to generate average rating
-function generateAverageRating(): number {
+export function generateAverageRating(): number {
 	const randomRating = Math.random() * 4 + 1 // Generate a random rating between 1 and 5
 	const truncatedRating = Math.floor(randomRating * 10) / 10 // Keep only 1 decimal place
 	return truncatedRating > 3 ? truncatedRating : 4.5 // Ensure the rating is greater than 3
 }
 
 // Function to generate review count
-function generateReviewCount(): number {
+export function generateReviewCount(): number {
 	// Generate a random review count (between 0 and 10)
 	return Math.floor(Math.random() * 11)
 }

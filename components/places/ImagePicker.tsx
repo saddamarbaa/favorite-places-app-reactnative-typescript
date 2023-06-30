@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		alignItems: 'center',
 		borderRadius: 8,
-		marginBottom: 20,
+		marginBottom: 10,
 	},
 	imagePlaceholderText: {
 		fontSize: 16,
